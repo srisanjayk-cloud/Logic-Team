@@ -1,0 +1,363 @@
+{% extends 'base.html' %} {% block content %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Instrument+Sans:wght@300;400;500&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  :root {
+    --bg: #080810;
+    --surface: #10101e;
+    --surface2: #161628;
+    --border: rgba(255, 255, 255, 0.07);
+    --border-focus: rgba(139, 127, 255, 0.5);
+    --accent: #8b7fff;
+    --accent-dim: rgba(139, 127, 255, 0.15);
+    --accent2: #5dcaa5;
+    --text-primary: #f0eeff;
+    --text-secondary: #8b8aaa;
+    --text-muted: #4a4a6a;
+    --error: #ff6b6b;
+  }
+
+  body {
+    font-family: "Instrument Sans", sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .form-wrapper {
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto;
+    padding-top: 20px;
+  }
+
+  /* Ambient background glow */
+  body::before {
+    content: "";
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 500px;
+    background: radial-gradient(
+      ellipse,
+      rgba(139, 127, 255, 0.12) 0%,
+      transparent 65%
+    );
+    pointer-events: none;
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    bottom: -150px;
+    right: -100px;
+    width: 500px;
+    height: 400px;
+    background: radial-gradient(
+      ellipse,
+      rgba(93, 202, 165, 0.08) 0%,
+      transparent 65%
+    );
+    pointer-events: none;
+  }
+
+  /* Grid texture */
+  .grid-texture {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+    padding-bottom: 0;
+  }
+
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 620px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Header */
+  .page-header {
+    margin-bottom: 2rem;
+    padding-left: 2px;
+  }
+
+  .page-header .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  .page-header .eyebrow::before {
+    content: "";
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.6;
+  }
+  .page-header h1 {
+    font-family: "Fraunces", serif;
+    font-size: 2.25rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.15;
+    margin-bottom: 0.4rem;
+  }
+  .page-header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .page-header p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2.25rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Section labels */
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 1.75rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-label:first-child {
+    margin-top: 0;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+  }
+  .field label {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.03em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .field label .req {
+    color: var(--accent);
+    font-size: 13px;
+    line-height: 1;
+  }
+  .field input,
+  .field textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 14px;
+    font-family: "Instrument Sans", sans-serif;
+    color: var(--text-primary);
+    outline: none;
+    transition:
+      border-color 0.2s,
+      background 0.2s,
+      box-shadow 0.2s;
+    width: 100%;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    border-color: var(--border-focus);
+    background: rgba(22, 22, 40, 0.9);
+    box-shadow: 0 0 0 4px rgba(139, 127, 255, 0.08);
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+  }
+
+  /* Submit */
+  .submit-area {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .btn-submit {
+    flex: 1;
+    padding: 13px 24px;
+    background: var(--accent);
+    color: #fff;
+    font-family: "Instrument Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 24px rgba(139, 127, 255, 0.25);
+  }
+  .btn-submit:hover {
+    opacity: 0.88;
+  }
+  .btn-cancel {
+    padding: 13px 20px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .btn-cancel:hover {
+    background: var(--surface2);
+    color: var(--text-primary);
+  }
+</style>
+
+<div class="form-wrapper">
+  <div class="grid-texture"></div>
+
+  <div class="page-wrapper">
+    <div class="page-header">
+      <div class="eyebrow">New Project</div>
+      <h1>Create a <em>project</em></h1>
+      <p>Fill in the details below to showcase your work.</p>
+    </div>
+
+    <div class="card">
+      <form method="POST">
+        {% csrf_token %}
+
+        <div class="section-label">Project Details</div>
+
+        <div class="field">
+          <label>Project title <span class="req">*</span></label>
+          <input
+            type="text"
+            name="title"
+            placeholder="Project title"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label>Description</label>
+          <textarea
+            name="description"
+            placeholder="Project description"
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <label>Tech Stack</label>
+          <input
+            type="text"
+            name="tech_stack"
+            placeholder="React, Django, etc"
+          />
+        </div>
+
+        <div class="field">
+          <label>GitHub Link <span class="req">*</span></label>
+          <input
+            type="url"
+            name="github_link"
+            placeholder="https://github.com/username/project"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label>Live Demo</label>
+          <input
+            type="url"
+            name="demo_link"
+            placeholder="Optional live demo link"
+          />
+        </div>
+
+        <div class="field">
+          <label>Team Members</label>
+          <input
+            type="text"
+            name="team_members"
+            placeholder="Usernames, comma separated"
+          />
+        </div>
+
+        <div class="submit-area">
+          <button type="button" class="btn-cancel">Cancel</button>
+          <button type="submit" class="btn-submit">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-send"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"
+              />
+            </svg>
+            Publish project
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

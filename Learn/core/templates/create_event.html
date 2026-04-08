@@ -1,0 +1,464 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+
+
+  :root {
+    --bg: #080810;
+    --surface: #10101e;
+    --surface2: #161628;
+    --border: rgba(255,255,255,0.07);
+    --border-focus: rgba(139,127,255,0.5);
+    --accent: #8b7fff;
+    --accent-dim: rgba(139,127,255,0.15);
+    --accent2: #5dcaa5;
+    --text-primary: #f0eeff;
+    --text-secondary: #8b8aaa;
+    --text-muted: #4a4a6a;
+    --error: #ff6b6b;
+  }
+
+  body {
+    font-family: 'Instrument Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+  }
+  .form-wrapper{
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;        
+  padding-top: 20px;     
+        
+}
+
+
+  /* Ambient background glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; left: 50%;
+    transform: translateX(-50%);
+    width: 700px; height: 500px;
+    background: radial-gradient(ellipse, rgba(139,127,255,0.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -150px; right: -100px;
+    width: 500px; height: 400px;
+    background: radial-gradient(ellipse, rgba(93,202,165,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  /* Grid texture */
+  .grid-texture {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 620px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Header area */
+  .page-header {
+    margin-bottom: 2rem;
+    padding-left: 2px;
+  }
+
+  .page-header .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .page-header .eyebrow::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--accent);
+    opacity: 0.6;
+  }
+
+  .page-header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 2.25rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.15;
+    margin-bottom: 0.4rem;
+  }
+
+  .page-header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .page-header p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2.25rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139,127,255,0.4), transparent);
+  }
+
+  /* Section separators */
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 1.75rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-label:first-child { margin-top: 0; }
+
+/* Grid layouts */
+.field-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 columns */
+  gap: 1rem; /* spacing between columns */
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Field wrapper */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* spacing between label and input */
+  width: 100%;
+  margin: 0; /* remove extra margin */
+}
+
+
+
+
+  .field label {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.03em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .field label .req {
+    color: var(--accent);
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .field input,
+  .field textarea,
+  .field select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 14px;
+    padding-right: 14px;
+    font-family: 'Instrument Sans', sans-serif;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+width: 100%;
+  box-sizing: border-box; /* ensure padding doesn't break layout */
+  }
+  
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--text-muted);
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: var(--border-focus);
+    background: rgba(22, 22, 40, 0.9);
+    box-shadow: 0 0 0 4px rgba(139,127,255,0.08);
+  }
+
+  /* datetime-local styling fix */
+  .field input[type="datetime-local"] {
+    color-scheme: dark;
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+  }
+
+  /* Icon input wrapper */
+  .input-icon-wrap {
+    position: relative;
+  }
+
+  .input-icon-wrap input {
+    padding-left: 38px;
+  }
+
+  .input-icon-wrap .icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 14px;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  /* Tags input */
+  .tags-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: -2px;
+  }
+
+  /* Submit area */
+  .submit-area {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .btn-submit {
+    flex: 1;
+    padding: 13px 24px;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: opacity 0.18s, transform 0.12s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 24px rgba(139,127,255,0.25);
+  }
+
+  .btn-submit:hover {
+    opacity: 0.88;
+    box-shadow: 0 6px 32px rgba(139,127,255,0.35);
+  }
+
+  .btn-submit:active { transform: scale(0.98); }
+
+  .btn-submit svg {
+    width: 15px; height: 15px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .btn-cancel {
+    padding: 13px 20px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    white-space: nowrap;
+  }
+
+  .btn-cancel:hover {
+    background: var(--surface2);
+    color: var(--text-primary);
+  }
+
+  /* Progress dots */
+  .progress-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 1.5rem;
+  }
+
+  .progress-dots span {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--text-muted);
+  }
+
+  .progress-dots span.active {
+    background: var(--accent);
+    width: 18px;
+    border-radius: 3px;
+  }
+
+  @media (max-width: 520px) {
+    .card { padding: 1.75rem 1.5rem; }
+    .field-grid-2 { grid-template-columns: 1fr; }
+    .page-header h1 { font-size: 1.75rem; }
+  }
+</style>
+
+<div class="form-wrapper">
+
+
+<div class="grid-texture"></div>
+
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="eyebrow">New event</div>
+    <h1>Create an <em>experience</em></h1>
+    <p>Fill in the details below to publish your event.</p>
+  </div>
+
+  <div class="card">
+    <form method="POST">
+      {% csrf_token %}
+
+      <!-- Event basics -->
+      <div class="section-label">Event details</div>
+
+      <div class="field" style="margin-bottom: 1rem;">
+        <label>Event title <span class="req">*</span></label>
+        <input type="text" name="title" placeholder="Give your event a compelling name" required>
+      </div>
+
+      <div class="field" style="margin-bottom: 1rem;">
+        <label>Description</label>
+        <textarea name="description" placeholder="What should attendees know about this event?"></textarea>
+      </div>
+
+      <div class="field-grid-2" style="margin-bottom: 1rem;">
+        <div class="field">
+          <label>Date &amp; time <span class="req">*</span></label>
+          <input type="datetime-local" name="date" required>
+        </div>
+        <div class="field">
+          <label>Location</label>
+          <div class="input-icon-wrap">
+            <span class="icon">📍</span>
+            <input type="text" name="location" placeholder="Venue or city">
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="section-label">Contact info</div>
+
+      <div class="field-grid-2" style="margin-bottom: 1rem;">
+        <div class="field">
+          <label>Phone</label>
+          <div class="input-icon-wrap">
+            <span class="icon">📞</span>
+            <input type="tel" name="phone" placeholder="+1 (555) 000-0000">
+          </div>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <div class="input-icon-wrap">
+            <span class="icon">✉</span>
+            <input type="email" name="email" placeholder="organizer@email.com">
+          </div>
+        </div>
+      </div>
+
+      <!-- Meta -->
+      <div class="section-label">Tags &amp; discovery</div>
+
+      <div class="field" style="margin-bottom: 0;">
+        <label>Tags</label>
+        <input type="text" name="tags" placeholder="music, outdoor, tech — separate with commas">
+        <span class="tags-hint">Helps people find your event</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="submit-area">
+        <button type="button" class="btn-cancel">Cancel</button>
+        <button type="submit" class="btn-submit">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Publish event
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="progress-dots">
+    <span class="active"></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+</div>
+{% endblock %}

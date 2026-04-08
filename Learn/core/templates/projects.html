@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+
+<style>
+body{
+  font-family:'DM Sans',sans-serif;
+  background:#0f0f1a;
+  color:white;
+  margin:0;
+  padding:40px;
+}
+
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.header h2{
+  font-family:'DM Serif Display',serif;
+  font-size:28px;
+}
+
+.btn{
+  padding:10px 16px;
+  background:#6366f1;
+  color:white;
+  border-radius:8px;
+  text-decoration:none;
+}
+
+/* GRID */
+.grid{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: start;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* CARD */
+.card{
+  background: #1f2937;
+  padding: 20px;
+  border-radius: 12px;
+  transition: 0.2s;
+  flex: 1 1 280px; /* makes each card uniform and responsive */
+}
+
+.card:hover{
+  transform:translateY(-5px);
+}
+
+/* CONTENT */
+.title{
+  font-size:18px;
+  font-weight:500;
+  margin-bottom:5px;
+}
+
+.meta{
+  font-size:12px;
+  color:#9ca3af;
+  margin-bottom:10px;
+}
+
+.desc{
+  font-size:14px;
+  color:#d1d5db;
+  margin-bottom:12px;
+}
+
+/* TAG */
+.tag{
+  display:inline-block;
+  background:#374151;
+  padding:4px 8px;
+  border-radius:6px;
+  font-size:12px;
+  margin-bottom:10px;
+}
+
+/* LINKS */
+.links{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.links a{
+  flex:1;
+  text-align:center;
+  padding:8px;
+  border-radius:6px;
+  text-decoration:none;
+  font-size:13px;
+}
+
+.github{
+  background:#111827;
+  color:#9ca3af;
+}
+
+.demo{
+  background:#6366f1;
+  color:white;
+}
+.topline{
+  height:4px;
+  background:#fff;
+  width:100%;
+  border-radius:2px;
+  margin-bottom:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h2>Projects</h2>
+  <a href="{% url 'project_create' %}" class="btn">+ New Project</a>
+</div>
+
+<div class="grid">
+
+  {% for project in projects %}
+    <div class="card">
+
+      <div class="title">{{ project.title }}</div>
+
+      <div class="meta">
+        👤 {{ project.created_by.username }} <br>
+        📅 {{ project.created_at|date:"M d, Y" }}
+      </div>
+
+      <div class="desc">
+        {{ project.description|truncatewords:20 }}
+      </div>
+
+      <div class="tag">
+        {{ project.tech_stack }}
+      </div>
+
+      <div class="links">
+        <a href="{{ project.github_link }}" target="_blank" class="github">GitHub</a>
+
+        {% if project.demo_link %}
+          <a href="{{ project.demo_link }}" target="_blank" class="demo">Live Demo</a>
+        {% endif %}
+      </div>
+
+    </div>
+  {% empty %}
+    <p>No projects yet.</p>
+  {% endfor %}
+
+</div>
+
+{% endblock %}

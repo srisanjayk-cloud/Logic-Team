@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #080810;
+  --surface: #10101e;
+  --surface2: #161628;
+  --border: rgba(255,255,255,0.07);
+  --border-focus: rgba(139,127,255,0.5);
+  --accent: #8b7fff;
+  --accent-dim: rgba(139,127,255,0.15);
+  --accent2: #5dcaa5;
+  --text-primary: #f0eeff;
+  --text-secondary: #8b8aaa;
+  --text-muted: #4a4a6a;
+  --error: #ff6b6b;
+}
+
+
+
+/* Background ambient glow */
+body::before {
+  content: '';
+  position: fixed;
+  top: -200px; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(ellipse, rgba(139,127,255,0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -150px; right: -100px;
+  width: 500px; height: 400px;
+  background: radial-gradient(ellipse, rgba(93,202,165,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* Grid texture */
+.grid-texture {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Page wrapper */
+.page-wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  animation: fadeUp 0.5s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Section title */
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+/* Card styling */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 2rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(139,127,255,0.15);
+}
+
+/* Card content */
+.card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  margin-top: 3rem;
+}
+
+/* Responsive grid */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+@media (max-width: 700px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="grid-texture"></div>
+
+<div class="page-wrapper">
+
+  <!-- Events Section -->
+  <div class="section">
+    <div class="section-title">Upcoming <em>Events</em></div>
+    <div class="grid-2">
+      {% for event in events %}
+      <div class="card">
+        <h3>{{ event.title }}</h3>
+        <p>{{ event.description|truncatewords:20 }}</p>
+        <p><strong>Date:</strong> {{ event.date }}</p>
+        <p><strong>Location:</strong> {{ event.location }}</p>
+      </div>
+      {% empty %}
+      <p style="color:var(--text-secondary)">No upcoming events.</p>
+      {% endfor %}
+    </div>
+    {% if events|length > 2 %}
+    <a href="{% url 'events_list' %}" class="see-more">See all events →</a>
+    {% endif %}
+    {% if not events %}
+    <p style="color:var(--text-secondary)">No upcoming events.</p>
+    {% endif %}
+
+  </div>
+
+  <!-- Projects Section -->
+  <div class="section">
+    <div class="section-title">Projects <em>Showcase</em></div>
+    <div class="grid-2">
+      {% for project in projects %}
+      <div class="card">
+        <h3>{{ project.title }}</h3>
+        <p>{{ project.description|truncatewords:25 }}</p>
+        <p><strong>Tech Stack:</strong> {{ project.tech_stack }}</p>
+        <p>
+          {% if project.github_link %}
+          <a href="{{ project.github_link }}" target="_blank" style="color:var(--accent)">GitHub</a>
+          {% endif %}
+          {% if project.demo_link %}
+          | <a href="{{ project.demo_link }}" target="_blank" style="color:var(--accent)">Demo</a>
+          {% endif %}
+        </p>
+      </div>
+      {% empty %}
+      <p style="color:var(--text-secondary)">No projects yet.</p>
+      {% endfor %}
+    </div>
+    {% if projects|length >= 2 %}
+    <a href="{% url 'projects' %}" class="see-more">See all projects →</a>
+    {% endif %}
+    {% if not projects %}
+    <p style="color:var(--text-secondary)">No projects yet.</p>
+    {% endif %}
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    &copy; {{ year }} My Portfolio. All rights reserved.
+  </div>
+
+</div>
+
+{% endblock %}
